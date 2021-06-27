@@ -1,0 +1,59 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define int long long
+const int MOD=1e18+3;
+void solve(){
+	int n, v, o, m, u, x;
+	cin>>n;	
+	int ned=0;
+	int c=0, p=0;
+	vector<pair<int,int>> a;
+	for(int i=0;i<n;i++){
+		cin>>v>>o>>m>>u;	
+		ned+=v;
+		x=(o+m+u)/2+1-o;
+		if(x>0){
+			if(x<=u){
+				a.push_back(make_pair(v,x));
+				p+=v;
+			}
+		}else{
+			c+=v;
+		}
+	}
+	ned=ned/2+1;
+	ned-=c;
+	if(ned<=0){
+		cout<<0;
+		return;
+	}
+	m=a.size();
+	int dp[p+1][m+1]={};
+	for(int v=1;v<=p;v++){
+		dp[v][0]=2e9;
+		for(int i=1;i<=m;i++){
+			dp[v][i]=dp[v][i-1];
+			if(v-a[i-1].first>=0){
+				dp[v][i]=min(dp[v][i],dp[v-a[i-1].first][i-1]+a[i-1].second);	
+			}
+		}
+	}
+	int ans=2e9;
+	for(int i=ned;i<=p;i++){
+		ans=min(ans,dp[i][m]);
+	}
+	if(ans==2e9){
+		cout<<"impossible";
+	}else{
+		cout<<ans;
+	}
+}
+signed main(){
+	ios_base::sync_with_stdio(0);
+	cin.tie(0);
+	int t=1;
+	while(t--){
+		solve();	
+	}
+	return 0;
+}
