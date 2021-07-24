@@ -1,0 +1,111 @@
+#include <iostream>
+#include <algorithm>
+using namespace std;
+#define int long long
+const int maxn=102;
+const int MOD=1e9+7;
+int dp[10][maxn]={};
+int answer(string x){
+	if(x=="0")return 0;
+	int res=0;
+	for(int i=1;i<x[0]-'0';i++){
+		for(int j=i;j<=9;j++){
+			if((int)x.size()-2>=0){
+				res+=dp[j][x.size()-2];
+				res%=MOD;
+			}		
+		}
+	}
+	string to="";
+	for(int i=1;i<(int)x.size();i++){
+		to+=x[i];		
+	}
+	return res+(x.size()>=2&&x[0]<=to[0]?answer(to):0);
+}
+void q(string& v){
+	if(v=="1"){
+		v="0";
+		return;
+	}
+	int ans=0;
+	for(int i=0;i<(int)v.size();i++){
+		if(v[i]-'0'){
+			ans=i;
+		}
+	}
+	if(ans==0&&v[ans]=='1'){
+		string answer="";
+		for(int i=1;i<(int)v.size();i++)answer+="9";
+		v=answer;
+	}else{
+		v[ans]=v[ans]-'0'-1+'0';
+	}
+}
+int t(string v){
+	for(int i=0;i+1<(int)v.size();i++){
+		if(v[i]>v[i+1]){
+			return 0;
+		}
+	}
+	return 1;
+}
+void solve(){
+	int res=0;
+	for(int i=1;i<=9;i++)dp[i][0]=1;
+	for(int i=1;i<maxn;i++){
+		for(int j=1;j<=9;j++){
+			for(int j2=j;j2<=9;j2++){
+				dp[j][i]+=dp[j2][i-1];
+			}
+			dp[j][i]%=MOD;
+		}
+	}
+	string l, r;
+	cin>>l>>r;
+	q(l);
+	for(int i=0;i<(int)r.size()-1;i++){
+		res+=dp[1][i];
+		res+=dp[2][i];
+		res+=dp[3][i];
+		res+=dp[4][i];
+		res+=dp[5][i];
+		res+=dp[6][i];
+		res+=dp[7][i];
+		res+=dp[8][i];
+		res+=dp[9][i];
+		res%=MOD;
+	}
+	for(int i=0;i<(int)l.size()-1;i++){
+		res-=dp[1][i];
+		res-=dp[2][i];
+		res-=dp[3][i];
+		res-=dp[4][i];
+		res-=dp[5][i];
+		res-=dp[6][i];
+		res-=dp[7][i];
+		res-=dp[8][i];
+		res-=dp[9][i];
+		res%=MOD;
+	}
+	res+=answer(r)-answer(l);
+	for(int i=0;l[l.size()-1]-'0'>=1;i++){
+		res-=t(l);
+		l[l.size()-1]=char(l[l.size()-1]-'0'-1+'0');
+	}
+	for(int i=0;r[r.size()-1]-'0'>=1;i++){
+		res+=t(r);
+		r[r.size()-1]=char(r[r.size()-1]-'0'-1+'0');
+	}
+	res%=MOD;
+	cout<<(res+MOD)%MOD<<endl;
+}
+signed main(){
+	ios_base::sync_with_stdio(0);
+	cin.tie(0);
+	int t=1;
+	//cin>>t;
+	while(t--){
+		solve();	
+	}
+	return 0;
+}
